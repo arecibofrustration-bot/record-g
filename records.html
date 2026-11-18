@@ -1,0 +1,1490 @@
+<!-- records.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Records - Auth Monitor</title>
+    <link rel="shortcut icon" href="/logo.ico" type="image/x-icon" />
+    <style>
+      :root {
+        --bg: #0b1120;
+        --surface: #151d2e;
+        --surface-2: #1c263b;
+        --surface-hover: #243047;
+        --text: #e2e8f0;
+        --text-muted: #94a3b8;
+        --primary: #3b82f6;
+        --primary-hover: #2563eb;
+        --success: #22c55e;
+        --success-hover: #16a34a;
+        --danger: #ef4444;
+        --danger-hover: #dc2626;
+        --warning: #f59e0b;
+        --border: #2a3650;
+        --border-light: #364461;
+        --radius: 14px;
+        --font:
+          "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(59, 130, 246, 0.08),
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(239, 68, 68, 0.05),
+            transparent 40%
+          ),
+          var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        min-height: 100vh;
+        padding: 24px;
+      }
+
+      /* ===== Auth screen ===== */
+      #auth-screen {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+
+      .auth-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 40px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      }
+
+      .auth-card h1 {
+        font-size: 24px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+      .auth-card p {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+        font-weight: 500;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 12px 14px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-size: 14px;
+        font-family: var(--font);
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .form-group input:focus {
+        border-color: var(--primary);
+      }
+
+      .password-wrap {
+        position: relative;
+      }
+      .password-wrap input {
+        padding-right: 44px;
+      }
+      .eye-btn {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+      }
+      .eye-btn:hover {
+        color: var(--text);
+        background: var(--surface-2);
+      }
+      .eye-btn svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      /* ===== Buttons ===== */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        font-family: var(--font);
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+      .btn-primary:hover:not(:disabled) {
+        background: var(--primary-hover);
+      }
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+      .btn-danger:hover:not(:disabled) {
+        background: var(--danger-hover);
+      }
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+      .btn-success:hover:not(:disabled) {
+        background: var(--success-hover);
+      }
+      .btn-ghost {
+        background: var(--surface-2);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .btn-ghost:hover:not(:disabled) {
+        background: var(--surface-hover);
+      }
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      .btn-block {
+        width: 100%;
+      }
+
+      .error-msg {
+        color: var(--danger);
+        font-size: 13px;
+        margin-top: 12px;
+        display: none;
+      }
+
+      /* ===== Records view ===== */
+      #records-view {
+        display: none;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .topbar h1 {
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+      }
+      .topbar .subtitle {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+      .topbar .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      /* ===== Toolbar ===== */
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .filter-row {
+        display: flex;
+        gap: 10px;
+        flex: 1;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .filter-row input,
+      .filter-row select {
+        padding: 10px 14px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-size: 14px;
+        font-family: var(--font);
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .filter-row input:focus,
+      .filter-row select:focus {
+        border-color: var(--primary);
+      }
+      .filter-row input[type="text"] {
+        flex: 1;
+        min-width: 200px;
+      }
+      .filter-row input[type="date"] {
+        min-width: 140px;
+      }
+
+      .filter-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 500;
+        padding-left: 4px;
+      }
+
+      .toolbar-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      /* ===== Table ===== */
+      .table-wrapper {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 12px 16px;
+        text-align: left;
+        font-size: 13px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      th {
+        background: var(--bg);
+        color: var(--text-muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        user-select: none;
+        white-space: nowrap;
+      }
+
+      th.sortable {
+        cursor: pointer;
+        transition: color 0.15s;
+      }
+      th.sortable:hover {
+        color: var(--text);
+      }
+      th.sortable .arrow {
+        display: inline-block;
+        margin-left: 4px;
+        opacity: 0.4;
+        font-size: 10px;
+      }
+      th.sortable.sort-asc .arrow,
+      th.sortable.sort-desc .arrow {
+        opacity: 1;
+        color: var(--primary);
+      }
+      th.sortable.sort-asc .arrow::before {
+        content: "▲";
+      }
+      th.sortable.sort-desc .arrow::before {
+        content: "▼";
+      }
+      th.sortable:not(.sort-asc):not(.sort-desc) .arrow::before {
+        content: "▲";
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tbody tr {
+        transition: background 0.15s;
+      }
+      tbody tr:hover {
+        background: var(--surface-hover);
+      }
+      tbody tr.selected {
+        background: rgba(59, 130, 246, 0.1);
+      }
+
+      td.checkbox-cell,
+      th.checkbox-cell {
+        width: 44px;
+        padding-right: 0;
+      }
+
+      .row-checkbox {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 1.5px solid var(--border-light);
+        border-radius: 4px;
+        background: transparent;
+        cursor: pointer;
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s;
+        vertical-align: middle;
+      }
+      .row-checkbox:hover {
+        border-color: var(--primary);
+      }
+      .row-checkbox:checked {
+        background: var(--primary);
+        border-color: var(--primary);
+      }
+      .row-checkbox:checked::after {
+        content: "";
+        width: 4px;
+        height: 8px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg) translate(-1px, -1px);
+        position: absolute;
+      }
+
+      .mono {
+        font-family: "SF Mono", "Consolas", monospace;
+        font-size: 12px;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+      .badge-pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--warning);
+      }
+      .badge-approved {
+        background: rgba(34, 197, 94, 0.2);
+        color: var(--success);
+      }
+      .badge-denied {
+        background: rgba(239, 68, 68, 0.2);
+        color: var(--danger);
+      }
+      .badge-email_entered {
+        background: rgba(148, 163, 184, 0.2);
+        color: var(--text-muted);
+      }
+      .badge-redirect {
+        background: rgba(59, 130, 246, 0.2);
+        color: var(--primary);
+      }
+
+      .value-cell {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .value-cell .text {
+        word-break: break-all;
+      }
+
+      .copy-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        flex: 0 0 auto;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.15s;
+        opacity: 0;
+      }
+      tr:hover .copy-btn {
+        opacity: 1;
+      }
+      .copy-btn:hover {
+        background: var(--surface-2);
+        color: var(--text);
+        border-color: var(--border-light);
+      }
+      .copy-btn.copied {
+        color: var(--success);
+        border-color: var(--success);
+        opacity: 1;
+      }
+      .copy-btn svg {
+        width: 12px;
+        height: 12px;
+      }
+
+      .row-delete-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .row-delete-btn:hover {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+        border-color: var(--danger);
+      }
+      .row-delete-btn svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-muted);
+      }
+      .empty-state svg {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        font-size: 13px;
+        color: var(--text-muted);
+        border-top: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .pagination-buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      .pagination-buttons button {
+        padding: 6px 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        font-size: 13px;
+        cursor: pointer;
+        font-family: var(--font);
+        transition: background 0.15s;
+      }
+
+      .pagination-buttons button:hover:not(:disabled) {
+        background: var(--surface-hover);
+      }
+      .pagination-buttons button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      /* ===== Bulk bar ===== */
+      .bulk-bar {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 16px;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.4);
+        border-radius: 10px;
+        margin-bottom: 12px;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .bulk-bar.visible {
+        display: flex;
+      }
+      .bulk-bar .info {
+        font-size: 13px;
+        color: var(--text);
+      }
+      .bulk-bar .info strong {
+        color: var(--primary);
+      }
+      .bulk-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      /* ===== Toast ===== */
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-size: 14px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s;
+        z-index: 1000;
+        max-width: 380px;
+      }
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .toast.success {
+        border-left: 3px solid var(--success);
+      }
+      .toast.error {
+        border-left: 3px solid var(--danger);
+      }
+      .toast.info {
+        border-left: 3px solid var(--primary);
+      }
+
+      /* ===== Confirm dialog ===== */
+      .dialog-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        padding: 20px;
+        backdrop-filter: blur(3px);
+      }
+      .dialog-backdrop.visible {
+        display: flex;
+      }
+      .dialog {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px;
+        max-width: 440px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      }
+      .dialog h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .dialog p {
+        color: var(--text-muted);
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 24px;
+      }
+      .dialog p strong {
+        color: var(--text);
+      }
+      .dialog-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
+      @media (max-width: 900px) {
+        .table-wrapper {
+          overflow-x: auto;
+        }
+        table {
+          min-width: 900px;
+        }
+        .toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .filter-row {
+          width: 100%;
+        }
+        .toolbar-actions {
+          width: 100%;
+        }
+        .toolbar-actions .btn {
+          flex: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Auth Screen -->
+    <div id="auth-screen">
+      <div class="auth-card">
+        <h1>Admin Login</h1>
+        <p>Sign in to view authentication records.</p>
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input
+            type="email"
+            id="login-email"
+            placeholder="admin@example.com"
+            autocomplete="username"
+          />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="password-wrap">
+            <input
+              type="password"
+              id="login-password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="eye-btn"
+              onclick="toggleLoginPassword()"
+              aria-label="Toggle password visibility"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <button
+          class="btn btn-primary btn-block"
+          onclick="handleLogin()"
+          id="login-btn"
+        >
+          Sign In
+        </button>
+        <div class="error-msg" id="login-error"></div>
+      </div>
+    </div>
+
+    <!-- Records View -->
+    <div id="records-view">
+      <div class="topbar">
+        <div>
+          <h1>Authentication Records</h1>
+          <p class="subtitle">
+            Full history of all auth sessions — read-only.
+          </p>
+        </div>
+        <div class="user-info">
+          <span id="admin-email-display"></span>
+          <a href="admin.html" class="btn btn-ghost btn-sm">Dashboard</a>
+          <button class="btn btn-danger btn-sm" onclick="handleLogout()">
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="filter-row">
+          <input
+            type="text"
+            id="filter-email"
+            placeholder="Filter by email..."
+            oninput="debouncedLoad()"
+          />
+          <select id="filter-status" onchange="onFilterChange()">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="denied">Denied</option>
+            <option value="email_entered">Email Entered</option>
+            <option value="redirect">Redirect</option>
+          </select>
+          <span class="filter-label">From</span>
+          <input type="date" id="filter-from" onchange="onFilterChange()" />
+          <span class="filter-label">To</span>
+          <input type="date" id="filter-to" onchange="onFilterChange()" />
+          <button class="btn btn-ghost btn-sm" onclick="resetFilters()">
+            Reset
+          </button>
+        </div>
+        <div class="toolbar-actions">
+          <button class="btn btn-ghost btn-sm" onclick="loadRecords()" title="Refresh">
+            ↻ Refresh
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()" title="Export filtered records to CSV">
+            ↓ Export CSV
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="deleteFiltered()" title="Delete all records matching current filters">
+            Delete Filtered
+          </button>
+        </div>
+      </div>
+
+      <div class="bulk-bar" id="bulk-bar">
+        <div class="info">
+          <strong id="selected-count">0</strong> selected
+        </div>
+        <div class="bulk-actions">
+          <button class="btn btn-ghost btn-sm" onclick="clearSelection()">
+            Clear
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="deleteSelected()">
+            Delete Selected
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th class="checkbox-cell">
+                <input
+                  type="checkbox"
+                  class="row-checkbox"
+                  id="select-all"
+                  onchange="toggleSelectAll(this)"
+                />
+              </th>
+              <th class="sortable" data-sort="created_at" onclick="setSort('created_at')">
+                Date <span class="arrow"></span>
+              </th>
+              <th class="sortable" data-sort="email" onclick="setSort('email')">
+                Email <span class="arrow"></span>
+              </th>
+              <th class="sortable" data-sort="password" onclick="setSort('password')">
+                Password <span class="arrow"></span>
+              </th>
+              <th class="sortable" data-sort="status" onclick="setSort('status')">
+                Status <span class="arrow"></span>
+              </th>
+              <th class="sortable" data-sort="twofa_number" onclick="setSort('twofa_number')">
+                2FA # <span class="arrow"></span>
+              </th>
+              <th class="sortable" data-sort="device_name" onclick="setSort('device_name')">
+                Device <span class="arrow"></span>
+              </th>
+              <th>Redirect URL</th>
+              <th style="width: 60px"></th>
+            </tr>
+          </thead>
+          <tbody id="records-tbody">
+            <tr>
+              <td
+                colspan="9"
+                style="text-align: center; padding: 40px; color: var(--text-muted)"
+              >
+                Loading...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span id="pagination-info">—</span>
+          <div class="pagination-buttons">
+            <button id="prev-btn" onclick="prevPage()">← Previous</button>
+            <button id="next-btn" onclick="nextPage()">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- Confirm dialog -->
+    <div class="dialog-backdrop" id="dialog-backdrop">
+      <div class="dialog">
+        <h3 id="dialog-title">Are you sure?</h3>
+        <p id="dialog-message"></p>
+        <div class="dialog-actions">
+          <button class="btn btn-ghost" onclick="closeDialog()">Cancel</button>
+          <button class="btn btn-danger" id="dialog-confirm">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      // ====== SUPABASE CONFIG ======
+      const SUPABASE_URL = "https://jvxlknzzpgfircioqlzd.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2eGxrbnp6cGdmaXJjaW9xbHpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUwMTMyMTMsImV4cCI6MjExMDU4OTIxM30.zwGoVZ9rup1I-NhhYBsrbQYMJ_tg0Vk39JYlhG5Lbg4";
+
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ====== STATE ======
+      let currentUser = null;
+      let currentPage = 0;
+      let totalCount = 0;
+      const PAGE_SIZE = 25;
+      let debounceTimer;
+      let currentRecords = [];
+      let selectedIds = new Set();
+      let sortColumn = "created_at";
+      let sortAscending = false;
+      let pendingConfirmAction = null;
+
+      // ====== AUTH ======
+      async function handleLogin() {
+        const email = document.getElementById("login-email").value.trim();
+        const password = document.getElementById("login-password").value;
+        const errEl = document.getElementById("login-error");
+        const btn = document.getElementById("login-btn");
+
+        errEl.style.display = "none";
+        btn.disabled = true;
+        btn.textContent = "Signing in...";
+
+        const { data, error } = await sb.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          errEl.textContent = error.message;
+          errEl.style.display = "block";
+          btn.disabled = false;
+          btn.textContent = "Sign In";
+          return;
+        }
+
+        currentUser = data.user;
+        showRecords();
+      }
+
+      async function handleLogout() {
+        await sb.auth.signOut();
+        currentUser = null;
+        document.getElementById("records-view").style.display = "none";
+        document.getElementById("auth-screen").style.display = "flex";
+        document.getElementById("login-password").value = "";
+      }
+
+      function toggleLoginPassword() {
+        const input = document.getElementById("login-password");
+        input.type = input.type === "password" ? "text" : "password";
+      }
+
+      function showRecords() {
+        document.getElementById("auth-screen").style.display = "none";
+        document.getElementById("records-view").style.display = "block";
+        document.getElementById("admin-email-display").textContent =
+          currentUser.email;
+        loadRecords();
+      }
+
+      // ====== FILTERS ======
+      function onFilterChange() {
+        currentPage = 0;
+        clearSelection();
+        loadRecords();
+      }
+
+      function debouncedLoad() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          currentPage = 0;
+          clearSelection();
+          loadRecords();
+        }, 300);
+      }
+
+      function resetFilters() {
+        document.getElementById("filter-email").value = "";
+        document.getElementById("filter-status").value = "";
+        document.getElementById("filter-from").value = "";
+        document.getElementById("filter-to").value = "";
+        onFilterChange();
+      }
+
+      function buildQuery(selectOpts = {}, forDelete = false) {
+        const emailFilter = document
+          .getElementById("filter-email")
+          .value.trim();
+        const statusFilter = document.getElementById("filter-status").value;
+        const fromDate = document.getElementById("filter-from").value;
+        const toDate = document.getElementById("filter-to").value;
+
+        let query = forDelete
+          ? sb.from("auth_sessions").delete()
+          : sb.from("auth_sessions").select("*", selectOpts);
+
+        if (emailFilter) query = query.ilike("email", `%${emailFilter}%`);
+        if (statusFilter) query = query.eq("status", statusFilter);
+        if (fromDate)
+          query = query.gte("created_at", new Date(fromDate).toISOString());
+        if (toDate) {
+          const end = new Date(toDate);
+          end.setHours(23, 59, 59, 999);
+          query = query.lte("created_at", end.toISOString());
+        }
+
+        return query;
+      }
+
+      // ====== LOAD ======
+      async function loadRecords() {
+        let query = buildQuery({ count: "exact" });
+
+        // Apply sort
+        query = query.order(sortColumn, { ascending: sortAscending });
+
+        // Pagination
+        query = query.range(
+          currentPage * PAGE_SIZE,
+          (currentPage + 1) * PAGE_SIZE - 1,
+        );
+
+        const { data, error, count } = await query;
+
+        if (error) {
+          console.error("Error loading records:", error);
+          document.getElementById("records-tbody").innerHTML =
+            `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--danger);">Error: ${escapeHtml(error.message)}</td></tr>`;
+          return;
+        }
+
+        totalCount = count || 0;
+        currentRecords = data || [];
+
+        // Remove any selected IDs that are no longer visible
+        const visibleIds = new Set(currentRecords.map((r) => r.id));
+        selectedIds.forEach((id) => {
+          if (!visibleIds.has(id)) selectedIds.delete(id);
+        });
+
+        renderRecords(currentRecords);
+        updatePagination();
+        updateSortIndicators();
+        updateBulkBar();
+        updateSelectAll();
+      }
+
+      // ====== SORT ======
+      function setSort(column) {
+        if (sortColumn === column) {
+          sortAscending = !sortAscending;
+        } else {
+          sortColumn = column;
+          sortAscending = true;
+        }
+        currentPage = 0;
+        loadRecords();
+      }
+
+      function updateSortIndicators() {
+        document.querySelectorAll("th.sortable").forEach((th) => {
+          th.classList.remove("sort-asc", "sort-desc");
+          if (th.dataset.sort === sortColumn) {
+            th.classList.add(sortAscending ? "sort-asc" : "sort-desc");
+          }
+        });
+      }
+
+      // ====== RENDER ======
+      function renderRecords(records) {
+        const tbody = document.getElementById("records-tbody");
+
+        if (!records || records.length === 0) {
+          tbody.innerHTML = `
+                <tr><td colspan="9">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <p>No records found.</p>
+                    </div>
+                </td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = records
+          .map((r) => {
+            const isSelected = selectedIds.has(r.id);
+            const emailVal = r.email || "—";
+            const passVal = r.password || "";
+            const emailCopyId = `copy-email-${r.id}`;
+            const passCopyId = `copy-pass-${r.id}`;
+            return `
+            <tr class="${isSelected ? "selected" : ""}" data-id="${r.id}">
+                <td class="checkbox-cell">
+                    <input type="checkbox" class="row-checkbox" data-id="${r.id}" ${
+                      isSelected ? "checked" : ""
+                    } onchange="toggleRowSelection('${r.id}', this.checked)" />
+                </td>
+                <td class="mono" style="font-size:11px;color:var(--text-muted);white-space:nowrap;">${new Date(r.created_at).toLocaleString()}</td>
+                <td>
+                    <div class="value-cell">
+                        <span class="text">${escapeHtml(emailVal)}</span>
+                        ${
+                          r.email
+                            ? `<button class="copy-btn" id="${emailCopyId}" onclick="copyText('${escapeAttr(emailVal)}', '${emailCopyId}')" title="Copy email">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>`
+                            : ""
+                        }
+                    </div>
+                </td>
+                <td>
+                    <div class="value-cell">
+                        <span class="text mono">${passVal ? escapeHtml(passVal) : "—"}</span>
+                        ${
+                          passVal
+                            ? `<button class="copy-btn" id="${passCopyId}" onclick="copyText('${escapeAttr(passVal)}', '${passCopyId}')" title="Copy password">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>`
+                            : ""
+                        }
+                    </div>
+                </td>
+                <td><span class="badge badge-${r.status}">${r.status}</span></td>
+                <td class="mono">${r.twofa_number || "—"}</td>
+                <td>${escapeHtml(r.device_name || "—")}</td>
+                <td class="mono" style="font-size:11px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeAttr(r.redirect_url || "")}">
+                    ${r.redirect_url ? escapeHtml(r.redirect_url) : "—"}
+                </td>
+                <td>
+                    <button class="row-delete-btn" onclick="deleteSingle('${r.id}')" title="Delete this record">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                </td>
+            </tr>
+        `;
+          })
+          .join("");
+      }
+
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return "";
+        const div = document.createElement("div");
+        div.textContent = String(str);
+        return div.innerHTML;
+      }
+
+      function escapeAttr(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/\\/g, "\\\\")
+          .replace(/'/g, "\\'")
+          .replace(/"/g, '\\"')
+          .replace(/\n/g, "\\n")
+          .replace(/\r/g, "\\r");
+      }
+
+      // ====== COPY ======
+      async function copyText(text, btnId) {
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+          }
+          const btn = document.getElementById(btnId);
+          if (btn) {
+            btn.classList.add("copied");
+            const original = btn.innerHTML;
+            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            setTimeout(() => {
+              btn.classList.remove("copied");
+              btn.innerHTML = original;
+            }, 1200);
+          }
+          showToast("Copied to clipboard", "info");
+        } catch (err) {
+          console.error("Copy failed:", err);
+          showToast("Copy failed", "error");
+        }
+      }
+
+      // ====== SELECTION ======
+      function toggleRowSelection(id, checked) {
+        if (checked) {
+          selectedIds.add(id);
+        } else {
+          selectedIds.delete(id);
+        }
+        const row = document.querySelector(`tr[data-id="${id}"]`);
+        if (row) row.classList.toggle("selected", checked);
+        updateBulkBar();
+        updateSelectAll();
+      }
+
+      function toggleSelectAll(checkbox) {
+        if (checkbox.checked) {
+          currentRecords.forEach((r) => selectedIds.add(r.id));
+        } else {
+          currentRecords.forEach((r) => selectedIds.delete(r.id));
+        }
+        document.querySelectorAll(".row-checkbox[data-id]").forEach((cb) => {
+          cb.checked = checkbox.checked;
+          const row = cb.closest("tr");
+          if (row) row.classList.toggle("selected", checkbox.checked);
+        });
+        updateBulkBar();
+      }
+
+      function updateSelectAll() {
+        const selectAll = document.getElementById("select-all");
+        if (!selectAll) return;
+        const visibleIds = currentRecords.map((r) => r.id);
+        const allSelected =
+          visibleIds.length > 0 &&
+          visibleIds.every((id) => selectedIds.has(id));
+        const someSelected = visibleIds.some((id) => selectedIds.has(id));
+        selectAll.checked = allSelected;
+        selectAll.indeterminate = someSelected && !allSelected;
+      }
+
+      function clearSelection() {
+        selectedIds.clear();
+        document
+          .querySelectorAll(".row-checkbox[data-id]")
+          .forEach((cb) => (cb.checked = false));
+        document
+          .querySelectorAll("tbody tr.selected")
+          .forEach((r) => r.classList.remove("selected"));
+        updateBulkBar();
+        updateSelectAll();
+      }
+
+      function updateBulkBar() {
+        const bar = document.getElementById("bulk-bar");
+        const count = selectedIds.size;
+        if (count > 0) {
+          bar.classList.add("visible");
+          document.getElementById("selected-count").textContent = count;
+        } else {
+          bar.classList.remove("visible");
+        }
+      }
+
+      // ====== DELETE ======
+      function openDialog(title, message, confirmLabel, onConfirm) {
+        document.getElementById("dialog-title").textContent = title;
+        document.getElementById("dialog-message").innerHTML = message;
+        const confirmBtn = document.getElementById("dialog-confirm");
+        confirmBtn.textContent = confirmLabel;
+        pendingConfirmAction = onConfirm;
+        document.getElementById("dialog-backdrop").classList.add("visible");
+      }
+
+      function closeDialog() {
+        document.getElementById("dialog-backdrop").classList.remove("visible");
+        pendingConfirmAction = null;
+      }
+
+      document
+        .getElementById("dialog-confirm")
+        .addEventListener("click", async () => {
+          const action = pendingConfirmAction;
+          closeDialog();
+          if (action) await action();
+        });
+
+      document
+        .getElementById("dialog-backdrop")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "dialog-backdrop") closeDialog();
+        });
+
+      async function deleteSingle(id) {
+        const rec = currentRecords.find((r) => r.id === id);
+        const label = rec ? rec.email || "this record" : "this record";
+        openDialog(
+          "Delete record?",
+          `Are you sure you want to delete the record for <strong>${escapeHtml(label)}</strong>? This cannot be undone.`,
+          "Delete",
+          async () => {
+            const { error } = await sb
+              .from("auth_sessions")
+              .delete()
+              .eq("id", id);
+            if (error) {
+              showToast("Error deleting: " + error.message, "error");
+            } else {
+              selectedIds.delete(id);
+              showToast("Record deleted.", "success");
+              loadRecords();
+            }
+          },
+        );
+      }
+
+      async function deleteSelected() {
+        const count = selectedIds.size;
+        if (count === 0) return;
+        openDialog(
+          `Delete ${count} record(s)?`,
+          `Are you sure you want to delete <strong>${count}</strong> selected record(s)? This cannot be undone.`,
+          `Delete ${count}`,
+          async () => {
+            const ids = Array.from(selectedIds);
+            const { error } = await sb
+              .from("auth_sessions")
+              .delete()
+              .in("id", ids);
+            if (error) {
+              showToast("Error deleting: " + error.message, "error");
+            } else {
+              selectedIds.clear();
+              showToast(`Deleted ${ids.length} record(s).`, "success");
+              loadRecords();
+            }
+          },
+        );
+      }
+
+      async function deleteFiltered() {
+        const emailFilter = document
+          .getElementById("filter-email")
+          .value.trim();
+        const statusFilter = document.getElementById("filter-status").value;
+        const fromDate = document.getElementById("filter-from").value;
+        const toDate = document.getElementById("filter-to").value;
+
+        const hasFilter =
+          emailFilter || statusFilter || fromDate || toDate;
+        if (!hasFilter) {
+          showToast(
+            "Apply at least one filter before using Delete Filtered.",
+            "error",
+          );
+          return;
+        }
+
+        openDialog(
+          "Delete all filtered records?",
+          `This will permanently delete <strong>all records matching the current filters</strong>. This cannot be undone.`,
+          "Delete All Filtered",
+          async () => {
+            let query = buildQuery({}, true);
+
+            const { data, error } = await query.select();
+
+            if (error) {
+              showToast("Error deleting: " + error.message, "error");
+            } else {
+              const count = data ? data.length : totalCount;
+              selectedIds.clear();
+              showToast(`Deleted ${count} filtered record(s).`, "success");
+              currentPage = 0;
+              loadRecords();
+            }
+          },
+        );
+      }
+
+      // ====== EXPORT ======
+      async function exportCSV() {
+        // Fetch all matching records (no pagination) for export
+        let query = buildQuery({});
+        query = query.order(sortColumn, { ascending: sortAscending });
+
+        const { data, error } = await query;
+
+        if (error) {
+          showToast("Error exporting: " + error.message, "error");
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          showToast("No records to export.", "error");
+          return;
+        }
+
+        const headers = [
+          "Date",
+          "Email",
+          "Password",
+          "Status",
+          "2FA Number",
+          "Device",
+          "Redirect URL",
+        ];
+
+        const rows = data.map((r) => [
+          new Date(r.created_at).toISOString(),
+          r.email || "",
+          r.password || "",
+          r.status || "",
+          r.twofa_number || "",
+          r.device_name || "",
+          r.redirect_url || "",
+        ]);
+
+        const csv = [
+          headers.join(","),
+          ...rows.map((row) =>
+            row
+              .map((cell) => {
+                const s = String(cell);
+                if (s.includes(",") || s.includes('"') || s.includes("\n")) {
+                  return `"${s.replace(/"/g, '""')}"`;
+                }
+                return s;
+              })
+              .join(","),
+          ),
+        ].join("\n");
+
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `auth_records_${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast(`Exported ${data.length} record(s).`, "success");
+      }
+
+      // ====== PAGINATION ======
+      function updatePagination() {
+        const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+        const start = totalCount === 0 ? 0 : currentPage * PAGE_SIZE + 1;
+        const end = Math.min((currentPage + 1) * PAGE_SIZE, totalCount);
+
+        document.getElementById("pagination-info").textContent =
+          totalCount === 0
+            ? "No records"
+            : `Showing ${start}–${end} of ${totalCount}`;
+
+        document.getElementById("prev-btn").disabled = currentPage === 0;
+        document.getElementById("next-btn").disabled =
+          currentPage >= totalPages - 1;
+      }
+
+      function prevPage() {
+        if (currentPage > 0) {
+          currentPage--;
+          loadRecords();
+        }
+      }
+
+      function nextPage() {
+        if (currentPage < Math.ceil(totalCount / PAGE_SIZE) - 1) {
+          currentPage++;
+          loadRecords();
+        }
+      }
+
+      // ====== TOAST ======
+      let toastTimeout;
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = "toast " + type + " show";
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      // ====== INIT ======
+      (async function init() {
+        const {
+          data: { session },
+        } = await sb.auth.getSession();
+        if (session) {
+          currentUser = session.user;
+          showRecords();
+        }
+      })();
+
+      document
+        .getElementById("login-password")
+        .addEventListener("keypress", (e) => {
+          if (e.key === "Enter") handleLogin();
+        });
+
+      // Escape key closes dialog
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeDialog();
+      });
+    </script>
+  </body>
+</html>
