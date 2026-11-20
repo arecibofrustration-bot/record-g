@@ -5,9 +5,12 @@
 import { next } from "@vercel/functions";
 
 export default function middleware(req) {
-  const cookie = req.cookies.get("captcha_ok");
+  const cookieHeader = req.headers.get("cookie") || "";
+  const hasCaptchaCookie = cookieHeader
+    .split(";")
+    .some((c) => c.trim().startsWith("captcha_ok="));
 
-  if (!cookie) {
+  if (!hasCaptchaCookie) {
     const gateUrl = new URL("/index.html", req.url);
     return new Response(null, {
       status: 307,
