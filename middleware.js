@@ -1,5 +1,5 @@
-// middleware.js
 // Runs on Vercel's Edge Network before protected.html is served.
+// middleware.js
 // If the captcha_ok cookie isn't present, bounce back to the gate.
 
 export function middleware(req) {
@@ -10,8 +10,8 @@ export function middleware(req) {
     return Response.redirect(gateUrl, 307);
   }
 
-  // Cookie present -> let the request through to protected.html
-  return;
+  // Cookie present -> let the request through
+  return new Response(null, { status: 200 });
 }
 
 // Only run this middleware for requests to protected.html.
