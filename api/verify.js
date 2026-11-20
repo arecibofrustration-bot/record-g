@@ -6,7 +6,7 @@
 // Name: RECAPTCHA_SECRET_KEY
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -35,12 +35,10 @@ export default async function handler(req, res) {
     const data = await verifyRes.json();
 
     if (!data.success) {
-      return res
-        .status(403)
-        .json({
-          error: "CAPTCHA verification failed",
-          details: data["error-codes"],
-        });
+      return res.status(403).json({
+        error: "CAPTCHA verification failed",
+        details: data["error-codes"],
+      });
     }
 
     // Optional: for reCAPTCHA v3 you'd also check data.score here, e.g.:
@@ -58,4 +56,4 @@ export default async function handler(req, res) {
     console.error("CAPTCHA verify error:", err);
     return res.status(500).json({ error: "Verification request failed" });
   }
-}
+};
